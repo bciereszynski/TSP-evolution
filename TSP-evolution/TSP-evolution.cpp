@@ -1,12 +1,17 @@
-﻿#include <iostream>
-
-#include "Location.h"
-#include "utils.h"
+﻿#include "TSP.h"
 
 #include <algorithm> 
 #include <random>    
 
-std::vector<std::vector<int>> generatePopulation(
+
+TSP::TSP(int populationSize, std::vector<Location>locations) {
+	std::random_device rd;
+
+	population =
+		generatePopulation(populationSize, locations, rd);
+}
+
+std::vector<std::vector<int>> TSP::generatePopulation(
 	int populationSize,
 	const std::vector<Location>& locations,
 	std::random_device& rd) {
@@ -27,9 +32,9 @@ std::vector<std::vector<int>> generatePopulation(
 	return population;
 }
 
-void scrambleMutation(std::vector<int>& individual, const int k, std::random_device& rd) {
+void TSP::scrambleMutation(std::vector<int>& individual, const int k, std::random_device& rd) {
 	if (individual.size() < k) {
-        throw std::runtime_error("ERROR: individual size is less than mutation parameter k");
+		throw std::runtime_error("ERROR: individual size is less than mutation parameter k");
 	}
 	std::vector<int> randomIndexes = utils::getRandomUniquePositions(
 		individual.size(), k, rd);
@@ -46,8 +51,19 @@ void scrambleMutation(std::vector<int>& individual, const int k, std::random_dev
 	}
 }
 
+std::pair<std::vector<int>, std::vector<int>> TSP::pmxCrossover(const std::vector<int>& parent1, const std::vector<int>& parent2, std::random_device& rd) {
+	int n = parent1.size();
 
-std::vector<int> createOffspring(int k, int l, std::vector<int> parent1, std::vector<int> parent2) {
+	std::vector<int> crossoverPoints = utils::getRandomUniquePositions(n, 2, rd);
+	if (crossoverPoints[0] > crossoverPoints[1]) {
+		std::swap(crossoverPoints[0], crossoverPoints[1]);
+	}
+
+	return { createOffspring(crossoverPoints[0], crossoverPoints[1], parent2, parent1),
+			 createOffspring(crossoverPoints[0], crossoverPoints[1], parent1, parent2) };
+}
+
+std::vector<int> TSP::createOffspring(int k, int l, std::vector<int> parent1, std::vector<int> parent2) {
 	int n = parent1.size();
 	std::vector<int> offspring(n, -1);
 	for (int i = k; i <= l; ++i) {
@@ -89,40 +105,3 @@ std::vector<int> createOffspring(int k, int l, std::vector<int> parent1, std::ve
 	}
 	return offspring;
 };
-
-std::pair<std::vector<int>, std::vector<int>> pmxCrossover(const std::vector<int>& parent1, const std::vector<int>& parent2, std::random_device& rd) {
-    int n = parent1.size();
-
-	std::vector<int> crossoverPoints = utils::getRandomUniquePositions(n, 2, rd);
-	if (crossoverPoints[0] > crossoverPoints[1]) {
-		std::swap(crossoverPoints[0], crossoverPoints[1]);
-	}
-
-	return { createOffspring(crossoverPoints[0], crossoverPoints[1], parent2, parent1),
-			 createOffspring(crossoverPoints[0], crossoverPoints[1], parent1, parent2) };
-}
-
-int main() {
-	const std::string filename = "data.tsp";
-	const int populationSize = 10;
-	const int k = 3;
-
-	std::vector<Location> locations = utils::loadTSPLIB(filename);
-
-	if (!locations.empty()) {
-		utils::printLocationsAndDistances(locations);
-	}
-	else {
-		std::cerr << "ERROR: data not loaded" << std::endl;
-		return 1;
-	}
-
-	std::random_device rd;
-
-	std::vector<std::vector<int>> population =
-		generatePopulation(populationSize, locations, rd);
-
-	utils::printPopulation(population);
-	
-	return 0;
-}

@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Location.h" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="TSP-evolution.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
@@ -135,6 +136,7 @@
     <Text Include="data.tsp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TSP.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
