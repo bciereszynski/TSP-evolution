@@ -6,6 +6,7 @@
 class TSP {
 
 public:
+	int minimumDistance = INT_MAX;
 	std::vector<Location> locations;
 	std::vector<std::vector<int>> population;
 	TSP(int populationSize, std::vector<Location>locations);
@@ -22,6 +23,7 @@ private:
 	std::vector<int> createPmxOffspring(
 		std::vector<int> parent1, std::vector<int> parent2,
 		int crosspoint1, int crosspoint2);
+	int selectParent(const std::vector<double>& probabilities, std::random_device& rd);
 	void scrambleMutation(std::vector<int>& individual, const int k, std::random_device& rd);
 	double calcIndividualFitness(const std::vector<int>& individual);
 };
