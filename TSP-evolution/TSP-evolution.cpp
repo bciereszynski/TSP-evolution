@@ -61,43 +61,31 @@ std::pair<std::vector<int>, std::vector<int>> TSP::pmxCrossover(const std::vecto
 std::vector<int> TSP::createPmxOffspring(std::vector<int> parent1, std::vector<int> parent2, int crosspoint1, int crosspoint2) {
 	int n = parent1.size();
 	std::vector<int> offspring(n, -1);
+
 	for (int i = crosspoint1; i <= crosspoint2; ++i) {
 		offspring[i] = parent1[i];
 	}
 
+	// create mapping for values that was copied from parent1
+	std::unordered_map<int, int> mapping;
 	for (int i = crosspoint1; i <= crosspoint2; ++i) {
-		auto subpartSerarchOffset = n - crosspoint2 - 1;
-		// Sprawdź czy dany element rodzica został skopiowany do potomka
-		if (std::find(offspring.begin() + crosspoint1, offspring.end() - subpartSerarchOffset,
-			parent2[i]) != offspring.end() - subpartSerarchOffset) {
-			continue;
-		}
-
-		// El. odpowiadjący offspring2[i] został skopiowany na miejsce el. nieskopiowanego parent2[i]
-		// Sprawdz czy element skopiowany znajduje się w zbiorze krzyżowym rodzica 
-		int correspondingValue;
-		auto correspondingIt = std::find(parent2.begin() + crosspoint1, parent2.end() - subpartSerarchOffset, offspring[i]);
-		if (correspondingIt == parent2.end() - subpartSerarchOffset) {
-			// Jeżeli element nie znajduje się w zbiorze, to znaczy że możemy wstawić nieskopiowany element w jego miejsce
-			correspondingValue = offspring[i];
-		}
-		else {
-			// W przeciwnym wypadku, sprawdzamy jaka wartość została skopiowana w jego miejsce
-			int correspondingIndex = std::distance(parent2.begin(), correspondingIt);
-			correspondingValue = offspring[correspondingIndex];
-		}
-		// Wstawiamy element nieskopiowany w miejsce w którym znajduje się jego element odpowiadający
-		auto it = std::find(parent2.begin(), parent2.end(), correspondingValue);
-		int index = std::distance(parent2.begin(), it);
-		offspring[index] = parent2[i];
+		mapping[parent1[i]] = parent2[i];
 	}
 
 	for (int i = 0; i < n; ++i) {
-		if (offspring[i] == -1) {
-			offspring[i] = parent2[i];
+		if (i >= crosspoint1 && i <= crosspoint2) {
+			continue;
+		}
+		int candidate_value = parent2[i];
+
+		while (std::find(offspring.begin() + crosspoint1, 
+			offspring.begin() + crosspoint2 + 1, candidate_value) != offspring.begin() + crosspoint2 + 1) {
+			candidate_value = mapping[candidate_value];	// while to handle situation when mapping value is also in offspring e.g. 1->2, 2->3
+	}
+
+		offspring[i] = candidate_value;
 		}
 
-	}
 	return offspring;
 };
 
