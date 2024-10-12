@@ -6,6 +6,7 @@
 class TSP {
 
 public:
+	std::vector<Location> locations;
 	std::vector<std::vector<int>> population;
 	TSP(int populationSize, std::vector<Location>locations);
 	std::pair<std::vector<int>, std::vector<int>> pmxCrossover(
@@ -22,4 +23,5 @@ private:
 		std::vector<int> parent1, std::vector<int> parent2,
 		int crosspoint1, int crosspoint2);
 	void scrambleMutation(std::vector<int>& individual, const int k, std::random_device& rd);
+	double calcIndividualFitness(const std::vector<int>& individual);
 };

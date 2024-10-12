@@ -7,6 +7,8 @@
 TSP::TSP(int populationSize, std::vector<Location>locations) {
 	std::random_device rd;
 
+	this->locations = locations;
+
 	population =
 		generatePopulation(populationSize, locations, rd);
 }
@@ -98,3 +100,11 @@ std::vector<int> TSP::createPmxOffspring(std::vector<int> parent1, std::vector<i
 	}
 	return offspring;
 };
+
+double TSP::calcIndividualFitness(const std::vector<int>& individual) {
+	double result = 0.0;
+	for (int i = 1; i < individual.size(); i++) {
+		result += utils::calcEuclDistance(locations[individual[i]-1], locations[individual[i - 1]-1]);
+	}
+	return result;
+}
