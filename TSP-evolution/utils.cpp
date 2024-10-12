@@ -47,6 +47,20 @@ namespace utils {
 		return locations;
 	}
 
+	std::vector<int> getRandomUniquePositions(const int n, const int k, std::random_device& rd) {
+		std::vector<int> indexes(n);
+		for (int i = 0; i < n; ++i) {
+			indexes[i] = i;
+		}
+
+		std::default_random_engine rng(rd());
+		std::shuffle(indexes.begin(), indexes.end(), rng);
+
+		std::vector<int> result(indexes.begin(), indexes.begin() + k);
+
+		return result;
+	}
+
 	void printLocationsAndDistances(const std::vector<Location>& locations) {
 		std::cout << "Locations:" << std::endl;
 		for (const auto& location : locations) {

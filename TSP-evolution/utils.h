@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <random>
 
 #include "Location.h"
 
@@ -10,6 +11,8 @@ namespace utils {
 	double calcEuclDistance(const Location& location1, const Location& location2);
 
 	std::vector<Location> loadTSPLIB(const std::string& filename);
+
+	std::vector<int> getRandomUniquePositions(const int n, const int k, std::random_device& rd);
 
 	void printLocationsAndDistances(const std::vector<Location>& locations);
 

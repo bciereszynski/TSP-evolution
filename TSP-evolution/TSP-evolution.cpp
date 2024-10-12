@@ -27,6 +27,25 @@ std::vector<std::vector<int>> generatePopulation(
 	return population;
 }
 
+void scrambleMutation(std::vector<int>& individual, const int k, std::random_device& rd) {
+	if (individual.size() < k) {
+        throw std::runtime_error("ERROR: individual size is less than mutation parameter k");
+	}
+	std::vector<int> randomIndexes = utils::getRandomUniquePositions(
+		individual.size(), k, rd);
+
+	std::vector<int> choosenLocations;
+	for (int i = 0; i < randomIndexes.size(); i++) {
+		choosenLocations.push_back(individual[randomIndexes[i]]);
+	}
+	std::default_random_engine rng(rd());
+	std::shuffle(choosenLocations.begin(), choosenLocations.end(), rng);
+
+	for (int i = 0; i < randomIndexes.size(); i++) {
+		individual[randomIndexes[i]] = choosenLocations[i];
+	}
+}
+
 int main() {
 	const std::string filename = "data.tsp";
 	const int populationSize = 10;
