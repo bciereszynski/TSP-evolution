@@ -47,6 +47,46 @@ namespace utils {
 		return locations;
 	}
 
+	std::vector<int> loadoptTSPLIB(const std::string& filename) {
+		std::vector<int> permutation;
+		std::ifstream file(filename);
+		std::string line;
+		bool inTOUR_SECTION = false;
+
+		if (!file) {
+			std::cerr << "ERROR: can't open file: " << filename << std::endl;
+			return permutation;
+		}
+
+		while (std::getline(file, line)) {
+			std::istringstream iss(line);
+			std::string keyword;
+
+			iss >> keyword;
+
+			if (keyword == "TOUR_SECTION") {
+				inTOUR_SECTION = true;
+				continue;
+			}
+
+			if (!inTOUR_SECTION) {
+				continue;
+			}
+
+			int id = std::stoi(keyword);
+
+			if (id == -1) {
+				break;
+			}
+
+			if (inTOUR_SECTION) {
+				permutation.push_back(id);
+			}
+		}
+
+		return permutation;
+	}
+
 	std::vector<int> getRandomUniquePositions(const int n, const int k, std::random_device& rd) {
 		std::vector<int> indexes(n);
 		for (int i = 0; i < n; ++i) {

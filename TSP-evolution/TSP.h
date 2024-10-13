@@ -14,6 +14,7 @@ public:
 			const std::vector<int>& parent1, const std::vector<int>& parent2,
 			int crosspoint1, int crosspoint2,
 			std::random_device& rd);
+	double compareToOpt(const std::vector<int>& permutation);
 
 private:
 	std::vector<std::vector<int>> generatePopulation(

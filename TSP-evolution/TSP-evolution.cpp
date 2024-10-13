@@ -168,3 +168,9 @@ double TSP::calcIndividualFitness(const std::vector<int>& individual) {
 	}
 	return result;
 }
+
+double TSP::compareToOpt(const std::vector<int>& permutation) {
+	double result = calcIndividualFitness(permutation);
+
+	return result - minimumDistance;
+}

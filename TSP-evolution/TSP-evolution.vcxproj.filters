@@ -41,4 +41,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="opt.tsp">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

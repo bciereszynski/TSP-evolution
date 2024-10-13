@@ -11,6 +11,7 @@ namespace utils {
 	double calcEuclDistance(const Location& location1, const Location& location2);
 
 	std::vector<Location> loadTSPLIB(const std::string& filename);
+	std::vector<int> loadoptTSPLIB(const std::string& filename);
 
 	std::vector<int> getRandomUniquePositions(const int n, const int k, std::random_device& rd);
 

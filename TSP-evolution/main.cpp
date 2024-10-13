@@ -1,6 +1,8 @@
 #include "TSP.h"
 #include <iostream>
 
+#include "utils.h"
+
 int main() {
 	const std::string filename = "data.tsp";
 	const int populationSize = 100;
@@ -14,6 +16,12 @@ int main() {
 	}
 
 	TSP tsp(populationSize, locations);
+
+	std::cout << "Minimum distance: " << tsp.minimumDistance << std::endl;
+
+	std::vector<int> optPath = utils::loadoptTSPLIB("opt.tsp");
+
+	std::cout << tsp.compareToOpt(optPath) << std::endl;
 
 	return 0;
 }
