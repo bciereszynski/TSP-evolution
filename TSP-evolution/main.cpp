@@ -6,6 +6,7 @@
 int main() {
 	const std::string filename = "data.tsp";
 	const int populationSize = 100;
+	const int iterations = 1000;
 	const int k = 3;
 
 	std::vector<Location> locations = utils::loadTSPLIB(filename);
@@ -15,7 +16,7 @@ int main() {
 		return 1;
 	}
 
-	TSP tsp(populationSize, locations);
+	TSP tsp(populationSize, locations, iterations);
 
 	std::cout << "Minimum distance: " << tsp.minimumDistance << std::endl;
 

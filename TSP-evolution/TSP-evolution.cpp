@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 
-TSP::TSP(int populationSize, std::vector<Location>locations) {
+TSP::TSP(int populationSize, std::vector<Location>locations, int iterations) {
 	std::random_device rd;
 
 	this->locations = locations;
@@ -14,7 +14,7 @@ TSP::TSP(int populationSize, std::vector<Location>locations) {
 	population =
 		generatePopulation(populationSize, locations, rd);
 
-	for (int generation = 0; generation < 100; generation++) {
+	for (int generation = 0; generation < iterations; generation++) {
 		std::vector<double> distances(population.size());
 
 		double max = 0.0;

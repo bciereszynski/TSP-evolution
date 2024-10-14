@@ -9,7 +9,7 @@ public:
 	int minimumDistance = INT_MAX;
 	std::vector<Location> locations;
 	std::vector<std::vector<int>> population;
-	TSP(int populationSize, std::vector<Location>locations);
+	TSP(int populationSize, std::vector<Location>locations, int iterations);
 	std::pair<std::vector<int>, std::vector<int>> pmxCrossover(
 			const std::vector<int>& parent1, const std::vector<int>& parent2,
 			int crosspoint1, int crosspoint2,
