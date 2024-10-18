@@ -1,10 +1,12 @@
 ﻿#include "TSP.h"
 
 #include <algorithm> 
+#include <cassert>
 #include <random>    
 #include <iostream>
 #include <unordered_map>
 
+#define BIG_NUMBER 100000
 
 TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam) {
 	std::random_device rd;
@@ -16,23 +18,21 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 		generatePopulation(populationSize, locations, rd);
 
 	for (int generation = 0; generation < iterations; generation++) {
-		std::vector<double> distances(population.size());
-
-		double max = 0.0;
-		for (int i = 0; i < population.size(); i++) {
-			distances[i] = calcIndividualFitness(population[i]);
-			max = std::max(max, distances[i]);
-		}
+		std::vector<double> fitnesses(population.size());
 
 		double sum = 0.0;
 		for (int i = 0; i < population.size(); i++) {
-			distances[i] = max - distances[i];
-			sum = sum + distances[i];
+			fitnesses[i] = calcIndividualFitness(population[i]);
+			if (fitnesses[i] > maksimumFitness) {
+				maksimumFitness = fitnesses[i];
+				bestPath = population[i];
+			}
+			sum = sum + fitnesses[i];
 		}
 
 		std::vector<double> probabilities(population.size());
 		for (int i = 0; i < population.size(); i++) {
-			auto probability = distances[i] / sum;
+			double probability = fitnesses[i] / sum;
 			probabilities[i] = (i == 0) ? probability : probability + probabilities[i - 1];
 		}
 
@@ -50,19 +50,18 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 
 		for (auto& individual : newPopulation) {
 			if (std::uniform_real_distribution<double>(0.0, 1.0)(rd) < 0.03) {
-				scrambleMutation(individual, mutationParam, rd);  // k = 3, przykład
+				scrambleMutation(individual, mutationParam, rd);
 			}
 		}
 		population = newPopulation;
+	}
 
-		auto minimum = -1;
-		for (int i = 0; i < population.size(); i++) {
-			distances[i] = calcIndividualFitness(population[i]);
-			if (minimum == -1 || distances[i] < minimum) {
-				minimum = distances[i];
-			}
+	for (int i = 0; i < population.size(); i++) {
+		auto dist = calcIndividualFitness(population[i]);
+		if (dist > maksimumFitness) {
+			maksimumFitness = dist;
+			bestPath = population[i];
 		}
-		minimumDistance = std::min(minimum, minimumDistance);
 	}
 }
 
@@ -160,6 +159,12 @@ std::vector<int> TSP::createPmxOffspring(std::vector<int> parent1, std::vector<i
 };
 
 double TSP::calcIndividualFitness(const std::vector<int>& individual) {
+	double result = BIG_NUMBER - calcIndividualValue(individual);
+	assert(result > 0);
+	return result;
+}
+
+double TSP::calcIndividualValue(const std::vector<int>& individual) {
 	double result = 0.0;
 	for (int i = 1; i < individual.size(); i++) {
 		result += utils::calcEuclDistance(locations[individual[i] - 1], locations[individual[i - 1] - 1]);
@@ -168,7 +173,11 @@ double TSP::calcIndividualFitness(const std::vector<int>& individual) {
 }
 
 double TSP::compareToOpt(const std::vector<int>& permutation) {
-	double result = calcIndividualFitness(permutation);
+	double optResult = calcIndividualValue(permutation);
+	double locatResult = calcIndividualValue(bestPath);
 
-	return result - minimumDistance;
+	std::cout << "Optimal path: " << optResult << std::endl;
+	std::cout << "Out best path: " << locatResult << std::endl;
+
+	return optResult - locatResult;
 }

@@ -18,8 +18,6 @@ int main() {
 
 	TSP tsp(populationSize, locations, iterations, k);
 
-	std::cout << "Minimum distance: " << tsp.minimumDistance << std::endl;
-
 	std::vector<int> optPath = utils::loadoptTSPLIB("opt.tsp");
 
 	std::cout << tsp.compareToOpt(optPath) << std::endl;
