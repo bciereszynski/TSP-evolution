@@ -9,7 +9,7 @@ public:
 	int minimumDistance = INT_MAX;
 	std::vector<Location> locations;
 	std::vector<std::vector<int>> population;
-	TSP(int populationSize, std::vector<Location>locations, int iterations);
+	TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam);
 	std::pair<std::vector<int>, std::vector<int>> pmxCrossover(
 			const std::vector<int>& parent1, const std::vector<int>& parent2,
 			int crosspoint1, int crosspoint2,
@@ -17,6 +17,7 @@ public:
 	double compareToOpt(const std::vector<int>& permutation);
 
 private:
+	int mutationParam;
 	std::vector<std::vector<int>> generatePopulation(
 		int populationSize,
 		const std::vector<Location>& locations,
@@ -24,7 +25,7 @@ private:
 	std::vector<int> createPmxOffspring(
 		std::vector<int> parent1, std::vector<int> parent2,
 		int crosspoint1, int crosspoint2);
-	int selectParent(const std::vector<double>& probabilities, std::random_device& rd);
+	std::vector<int> selectParent(const std::vector<double>& probabilities, std::random_device& rd);
 	void scrambleMutation(std::vector<int>& individual, const int k, std::random_device& rd);
 	double calcIndividualFitness(const std::vector<int>& individual);
 };

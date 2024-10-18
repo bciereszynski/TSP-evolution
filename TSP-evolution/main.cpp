@@ -16,7 +16,7 @@ int main() {
 		return 1;
 	}
 
-	TSP tsp(populationSize, locations, iterations);
+	TSP tsp(populationSize, locations, iterations, k);
 
 	std::cout << "Minimum distance: " << tsp.minimumDistance << std::endl;
 

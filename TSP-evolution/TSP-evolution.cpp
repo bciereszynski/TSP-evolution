@@ -6,10 +6,11 @@
 #include <unordered_map>
 
 
-TSP::TSP(int populationSize, std::vector<Location>locations, int iterations) {
+TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam) {
 	std::random_device rd;
 
 	this->locations = locations;
+	this->mutationParam = mutationParam;
 
 	population =
 		generatePopulation(populationSize, locations, rd);
@@ -37,16 +38,10 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations) {
 
 		std::vector<std::vector<int>> newPopulation;
 		for (int i = 0; i < population.size(); i += 2) {
-			int parent1Index = selectParent(probabilities, rd);
-			int parent2Index = selectParent(probabilities, rd);
-
-			std::vector<int> parent1 = population[parent1Index];
-			std::vector<int> parent2 = population[parent2Index];
+			std::vector<int> parent1 = selectParent(probabilities, rd);
+			std::vector<int> parent2 = selectParent(probabilities, rd);
 
 			std::vector<int> crossoverPoints = utils::getRandomUniquePositions(parent1.size(), 2, rd);
-			if (crossoverPoints[0] > crossoverPoints[1]) {
-				std::swap(crossoverPoints[0], crossoverPoints[1]);
-			}
 
 			auto offspringPair = pmxCrossover(parent1, parent2, crossoverPoints[0], crossoverPoints[1], rd);
 			newPopulation.push_back(offspringPair.first);
@@ -55,7 +50,7 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations) {
 
 		for (auto& individual : newPopulation) {
 			if (std::uniform_real_distribution<double>(0.0, 1.0)(rd) < 0.03) {
-				scrambleMutation(individual, locations.size() / 2, rd);  // k = 3, przykład
+				scrambleMutation(individual, mutationParam, rd);  // k = 3, przykład
 			}
 		}
 		population = newPopulation;
@@ -71,14 +66,14 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations) {
 	}
 }
 
-int TSP::selectParent(const std::vector<double>& probabilities, std::random_device& rd) {
+std::vector<int> TSP::selectParent(const std::vector<double>& probabilities, std::random_device& rd) {
 	std::default_random_engine rng(rd());
 	std::uniform_real_distribution<double> distribution(0.0, 1.0);
 	double value = distribution(rng);
 
 	auto it = std::lower_bound(probabilities.begin(), probabilities.end(), value);
 	if (it != probabilities.end()) {
-		return std::distance(probabilities.begin(), it);
+		return population[std::distance(probabilities.begin(), it)];
 	}
 	else {
 		throw std::runtime_error("ERROR: lower_bound failed");
@@ -126,6 +121,9 @@ void TSP::scrambleMutation(std::vector<int>& individual, const int k, std::rando
 }
 
 std::pair<std::vector<int>, std::vector<int>> TSP::pmxCrossover(const std::vector<int>& parent1, const std::vector<int>& parent2, int crosspoint1, int crosspoint2, std::random_device& rd) {
+	if (crosspoint1 > crosspoint2) {
+		std::swap(crosspoint1, crosspoint2);
+	}
 	return { createPmxOffspring(parent2, parent1, crosspoint1, crosspoint2),
 			 createPmxOffspring(parent1, parent2, crosspoint1, crosspoint2) };
 }
