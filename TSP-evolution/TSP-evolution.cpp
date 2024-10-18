@@ -16,9 +16,11 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 
 	population =
 		generatePopulation(populationSize, locations, rd);
+	int iterationsWithoutImprovement = 0;
 
 	for (int generation = 0; generation < iterations; generation++) {
 		std::vector<double> fitnesses(population.size());
+		bool improvement = false;
 
 		double sum = 0.0;
 		for (int i = 0; i < population.size(); i++) {
@@ -26,8 +28,19 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 			if (fitnesses[i] > maksimumFitness) {
 				maksimumFitness = fitnesses[i];
 				bestPath = population[i];
+				improvement = true;
 			}
 			sum = sum + fitnesses[i];
+		}
+
+		if (!improvement) {
+			iterationsWithoutImprovement++;
+			if (iterationsWithoutImprovement == 1000) {
+				break;
+			}
+		}
+		else {
+			iterationsWithoutImprovement = 0;
 		}
 
 		std::vector<double> probabilities(population.size());
