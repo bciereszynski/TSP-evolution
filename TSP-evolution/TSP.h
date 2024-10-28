@@ -31,7 +31,7 @@ private:
 	Path createPmxOffspring(
 		Path parent1, Path parent2,
 		int crosspoint1, int crosspoint2);
-	Path selectParentTournament();
+	Path selectParentTournament(std::vector<double> values);
 	void scrambleMutation(Path& individual);
 	std::pair<Path, Path> pmxCrossover(const Path& parent1, const Path& parent2,
 		int crosspoint1, int crosspoint2);

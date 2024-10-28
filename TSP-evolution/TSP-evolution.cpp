@@ -14,17 +14,18 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 	generatePopulation(populationSize, locations);
 	calculateDistances(locations);
 	int iterationsWithoutImprovement = 0;
+	std::vector<double> values(population.size());
 
 	while (true) {
 
 		bool improvement = false;
 
 		for (int i = 0; i < population.size(); i++) {
-			auto value = calcIndividualValue(population[i]);
-			if (value < bestValue) {
-				bestValue = value;
+			values[i] = calcIndividualValue(population[i]);
+			if (values[i] < bestValue) {
+				bestValue = values[i];
 				bestPath = population[i];
-				std::cout << "curr best: " << bestValue << std::endl;
+				std::cout << "curr best: " << bestValue << " - iteration without improvement: " << iterationsWithoutImprovement << std::endl;
 				improvement = true;
 			}
 		}
@@ -41,8 +42,8 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 
 		std::vector<Path> newPopulation;
 		for (int i = 0; i < population.size(); i += 2) {
-			Path parent1 = selectParentTournament();
-			Path parent2 = selectParentTournament();
+			Path parent1 = selectParentTournament(values);
+			Path parent2 = selectParentTournament(values);
 
 			std::vector<int> crossoverPoints = utils::getRandomUniquePositions(parent1.size(), 2, rd);
 
@@ -68,9 +69,8 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 	}
 }
 
-Path TSP::selectParentTournament() {
-	std::uniform_int_distribution<int> dist(0, population.size() - 1);
-	double bestValue = std::numeric_limits<double>::max();
+Path TSP::selectParentTournament(std::vector<double> values) {
+	double bestIndividualValue = std::numeric_limits<double>::max();
 	Path bestIndividual;
 
 	std::unordered_set<int> selectedIndices;
@@ -84,10 +84,10 @@ Path TSP::selectParentTournament() {
 		selectedIndices.insert(randomIndex);
 
 		const auto& candidate = population[randomIndex];
-		double candidateValue = calcIndividualValue(candidate);
+		double candidateValue = values[randomIndex];
 
-		if (candidateValue < bestValue) {
-			bestValue = candidateValue;
+		if (candidateValue < bestIndividualValue) {
+			bestIndividualValue = candidateValue;
 			bestIndividual = candidate;
 		}
 	}
