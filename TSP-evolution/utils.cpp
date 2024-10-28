@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <unordered_set>
 
 namespace utils {
 	double calcEuclDistance(const Location& location1, const Location& location2) {
@@ -88,17 +89,36 @@ namespace utils {
 	}
 
 	std::vector<int> getRandomUniquePositions(const int n, const int k, std::random_device& rd) {
-		std::vector<int> indexes(n);
-		for (int i = 0; i < n; ++i) {
-			indexes[i] = i;
+		if (k > n / 10) {
+			std::vector<int> indexes(n);
+			for (int i = 0; i < n; ++i) {
+				indexes[i] = i;
+			}
+
+			std::default_random_engine rng(rd());
+			std::shuffle(indexes.begin(), indexes.end(), rng);
+
+			std::vector<int> result(indexes.begin(), indexes.begin() + k);
+
+			return result;
+
 		}
+		else {
+			std::vector<int> result;
+			result.reserve(k);
+			std::default_random_engine rng(rd());
+			std::uniform_int_distribution<int> dist(0, n - 1);
+			std::unordered_set<int> selected;
 
-		std::default_random_engine rng(rd());
-		std::shuffle(indexes.begin(), indexes.end(), rng);
+			while (result.size() < k) {
+				int pos = dist(rng);
+				if (selected.insert(pos).second){
+					result.push_back(pos);
+				}
+			}
 
-		std::vector<int> result(indexes.begin(), indexes.begin() + k);
-
-		return result;
+			return result;
+		}	
 	}
 
 	void printLocationsAndDistances(const std::vector<Location>& locations) {
