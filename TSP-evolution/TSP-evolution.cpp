@@ -8,14 +8,11 @@
 #include <unordered_set>
 
 TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam, int selectionParam) {
-	std::random_device rd;
-
 	this->locations = locations;
 	this->mutationParam = mutationParam;
 	this->selectionParam = selectionParam;
 
-	population =
-		generatePopulation(populationSize, locations, rd);
+	generatePopulation(populationSize);
 	int iterationsWithoutImprovement = 0;
 
 	while (true) {
@@ -43,19 +40,19 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 
 		std::vector<Path> newPopulation;
 		for (int i = 0; i < population.size(); i += 2) {
-			Path parent1 = selectParentTournament(population, rd);
-			Path parent2 = selectParentTournament(population, rd);
+			Path parent1 = selectParentTournament();
+			Path parent2 = selectParentTournament();
 
 			std::vector<int> crossoverPoints = utils::getRandomUniquePositions(parent1.size(), 2, rd);
 
-			auto offspringPair = pmxCrossover(parent1, parent2, crossoverPoints[0], crossoverPoints[1], rd);
+			auto offspringPair = pmxCrossover(parent1, parent2, crossoverPoints[0], crossoverPoints[1]);
 			newPopulation.push_back(offspringPair.first);
 			newPopulation.push_back(offspringPair.second);
 		}
 
 		for (auto& individual : newPopulation) {
 			if (std::uniform_real_distribution<double>(0.0, 1.0)(rd) < 0.03) {
-				scrambleMutation(individual, rd);
+				scrambleMutation(individual);
 			}
 		}
 		population = newPopulation;
@@ -70,7 +67,7 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 	}
 }
 
-Path TSP::selectParentTournament(const std::vector<Path>& population, std::random_device& rd) {
+Path TSP::selectParentTournament() {
 	std::uniform_int_distribution<int> dist(0, population.size() - 1);
 	double bestValue = std::numeric_limits<double>::max();
 	Path bestIndividual;
@@ -97,11 +94,8 @@ Path TSP::selectParentTournament(const std::vector<Path>& population, std::rando
 	return bestIndividual;
 }
 
-std::vector<Path> TSP::generatePopulation(
-	int populationSize,
-	const std::vector<Location>& locations,
-	std::random_device& rd) {
-	std::vector<Path> population;
+void TSP::generatePopulation(int populationSize ) 
+{
 	Path locationsIDs;
 
 	for (int i = 0; i < locations.size(); ++i) {
@@ -114,11 +108,9 @@ std::vector<Path> TSP::generatePopulation(
 		std::shuffle(locationsIDs.begin(), locationsIDs.end(), rng);
 		population.push_back(locationsIDs);
 	}
-
-	return population;
 }
 
-void TSP::scrambleMutation(Path& individual, std::random_device& rd) {
+void TSP::scrambleMutation(Path& individual) {
 	if (individual.size() < mutationParam) {
 		throw std::runtime_error("ERROR: individual size is less than mutation parameter k");
 	}
@@ -137,7 +129,7 @@ void TSP::scrambleMutation(Path& individual, std::random_device& rd) {
 	}
 }
 
-std::pair<Path, Path> TSP::pmxCrossover(const Path& parent1, const Path& parent2, int crosspoint1, int crosspoint2, std::random_device& rd) {
+std::pair<Path, Path> TSP::pmxCrossover(const Path& parent1, const Path& parent2, int crosspoint1, int crosspoint2) {
 	if (crosspoint1 > crosspoint2) {
 		std::swap(crosspoint1, crosspoint2);
 	}

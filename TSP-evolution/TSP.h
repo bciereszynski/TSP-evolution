@@ -21,16 +21,15 @@ private:
 	int mutationParam;
 	int selectionParam;
 
-	std::vector<Path> generatePopulation(
-		int populationSize,
-		const std::vector<Location>& locations,
-		std::random_device& rd);
+	std::random_device rd;
+
+	void generatePopulation(int populationSize);
 	Path createPmxOffspring(
 		Path parent1, Path parent2,
 		int crosspoint1, int crosspoint2);
-	Path selectParentTournament(const std::vector<Path>& population, std::random_device& rd);
-	void scrambleMutation(Path& individual, const int k, std::random_device& rd);
+	Path selectParentTournament();
+	void scrambleMutation(Path& individual);
 	std::pair<Path, Path> pmxCrossover(const Path& parent1, const Path& parent2,
-		int crosspoint1, int crosspoint2, std::random_device& rd);
+		int crosspoint1, int crosspoint2);
 	double calcIndividualValue(const Path& individual);
 };
