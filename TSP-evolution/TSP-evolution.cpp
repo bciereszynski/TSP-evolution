@@ -5,7 +5,6 @@
 #include <random>    
 #include <iostream>
 #include <unordered_map>
-#include <unordered_set>
 
 TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam, int selectionParam) {
 	this->mutationParam = mutationParam;
@@ -71,20 +70,16 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 
 Path TSP::selectParentTournament(std::vector<double> values) {
 	double bestIndividualValue = std::numeric_limits<double>::max();
-	Path bestIndividual;
+	Path bestIndividual = population[0];
 
-	std::unordered_set<int> selectedIndices;
+	std::vector<int> selectedIndexes =
+		utils::getRandomUniquePositions(population.size(), selectionParam, rd);
 
 	for (int i = 0; i < selectionParam; ++i) {
-		int randomIndex = dist(rd);
-		while (selectedIndices.find(randomIndex) != selectedIndices.end()) {
-			randomIndex = (randomIndex + 1) % population.size();
-		}
+		int index = selectedIndexes[i];
 
-		selectedIndices.insert(randomIndex);
-
-		const auto& candidate = population[randomIndex];
-		double candidateValue = values[randomIndex];
+		const auto& candidate = population[index];
+		double candidateValue = values[index];
 
 		if (candidateValue < bestIndividualValue) {
 			bestIndividualValue = candidateValue;
