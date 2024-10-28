@@ -10,7 +10,7 @@ using Path = std::vector<int>;
 class TSP {
 
 public:
-	TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam);
+	TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam, int selectionParam);
 	double compareToOpt(const Path& permutation);
 
 private:
@@ -19,6 +19,7 @@ private:
 	Path bestPath;
 	double bestValue = std::numeric_limits<double>::max();
 	int mutationParam;
+	int selectionParam;
 
 	std::vector<Path> generatePopulation(
 		int populationSize,
@@ -27,7 +28,7 @@ private:
 	Path createPmxOffspring(
 		Path parent1, Path parent2,
 		int crosspoint1, int crosspoint2);
-	Path selectParentTournament(const std::vector<Path>& population, int q, std::random_device& rd);
+	Path selectParentTournament(const std::vector<Path>& population, std::random_device& rd);
 	void scrambleMutation(Path& individual, const int k, std::random_device& rd);
 	std::pair<Path, Path> pmxCrossover(const Path& parent1, const Path& parent2,
 		int crosspoint1, int crosspoint2, std::random_device& rd);

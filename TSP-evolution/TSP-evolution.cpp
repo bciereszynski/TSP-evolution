@@ -7,17 +7,18 @@
 #include <unordered_map>
 #include <unordered_set>
 
-TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam) {
+TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam, int selectionParam) {
 	std::random_device rd;
 
 	this->locations = locations;
 	this->mutationParam = mutationParam;
+	this->selectionParam = selectionParam;
 
 	population =
 		generatePopulation(populationSize, locations, rd);
 	int iterationsWithoutImprovement = 0;
 
-	for (int generation = 0; generation < iterations; generation++) {
+	while (true) {
 
 		bool improvement = false;
 
@@ -32,7 +33,7 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 
 		if (!improvement) {
 			iterationsWithoutImprovement++;
-			if (iterationsWithoutImprovement == 1000) {
+			if (iterationsWithoutImprovement == iterations) {
 				break;
 			}
 		}
@@ -42,8 +43,8 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 
 		std::vector<Path> newPopulation;
 		for (int i = 0; i < population.size(); i += 2) {
-			Path parent1 = selectParentTournament(population, 5, rd);
-			Path parent2 = selectParentTournament(population, 5, rd);
+			Path parent1 = selectParentTournament(population, rd);
+			Path parent2 = selectParentTournament(population, rd);
 
 			std::vector<int> crossoverPoints = utils::getRandomUniquePositions(parent1.size(), 2, rd);
 
@@ -54,7 +55,7 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 
 		for (auto& individual : newPopulation) {
 			if (std::uniform_real_distribution<double>(0.0, 1.0)(rd) < 0.03) {
-				scrambleMutation(individual, mutationParam, rd);
+				scrambleMutation(individual, rd);
 			}
 		}
 		population = newPopulation;
@@ -69,14 +70,14 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 	}
 }
 
-Path TSP::selectParentTournament(const std::vector<Path>& population, int q, std::random_device& rd) {
+Path TSP::selectParentTournament(const std::vector<Path>& population, std::random_device& rd) {
 	std::uniform_int_distribution<int> dist(0, population.size() - 1);
 	double bestValue = std::numeric_limits<double>::max();
 	Path bestIndividual;
 
 	std::unordered_set<int> selectedIndices;
 
-	for (int i = 0; i < q; ++i) {
+	for (int i = 0; i < selectionParam; ++i) {
 		int randomIndex = dist(rd);
 		while (selectedIndices.find(randomIndex) != selectedIndices.end()) {
 			randomIndex = (randomIndex + 1) % population.size();
@@ -117,12 +118,12 @@ std::vector<Path> TSP::generatePopulation(
 	return population;
 }
 
-void TSP::scrambleMutation(Path& individual, const int k, std::random_device& rd) {
-	if (individual.size() < k) {
+void TSP::scrambleMutation(Path& individual, std::random_device& rd) {
+	if (individual.size() < mutationParam) {
 		throw std::runtime_error("ERROR: individual size is less than mutation parameter k");
 	}
 	std::vector<int> randomIndexes = utils::getRandomUniquePositions(
-		individual.size(), k, rd);
+		individual.size(), mutationParam, rd);
 
 	std::vector<int> choosenLocations;
 	for (int i = 0; i < randomIndexes.size(); i++) {
