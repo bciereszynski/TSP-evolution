@@ -5,8 +5,7 @@
 #include <random>    
 #include <iostream>
 #include <unordered_map>
-
-#define BIG_NUMBER 100000
+#include <unordered_set>
 
 TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam) {
 	std::random_device rd;
@@ -19,18 +18,16 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 	int iterationsWithoutImprovement = 0;
 
 	for (int generation = 0; generation < iterations; generation++) {
-		std::vector<double> fitnesses(population.size());
+
 		bool improvement = false;
 
-		double sum = 0.0;
 		for (int i = 0; i < population.size(); i++) {
-			fitnesses[i] = calcIndividualFitness(population[i]);
-			if (fitnesses[i] > maksimumFitness) {
-				maksimumFitness = fitnesses[i];
+			auto value = calcIndividualValue(population[i]);
+			if (value < bestValue) {
+				bestValue = value;
 				bestPath = population[i];
 				improvement = true;
 			}
-			sum = sum + fitnesses[i];
 		}
 
 		if (!improvement) {
@@ -43,16 +40,10 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 			iterationsWithoutImprovement = 0;
 		}
 
-		std::vector<double> probabilities(population.size());
-		for (int i = 0; i < population.size(); i++) {
-			double probability = fitnesses[i] / sum;
-			probabilities[i] = (i == 0) ? probability : probability + probabilities[i - 1];
-		}
-
 		std::vector<std::vector<int>> newPopulation;
 		for (int i = 0; i < population.size(); i += 2) {
-			std::vector<int> parent1 = selectParent(probabilities, rd);
-			std::vector<int> parent2 = selectParent(probabilities, rd);
+			std::vector<int> parent1 = selectParentTournament(population, 5, rd);
+			std::vector<int> parent2 = selectParentTournament(population, 5, rd);
 
 			std::vector<int> crossoverPoints = utils::getRandomUniquePositions(parent1.size(), 2, rd);
 
@@ -70,26 +61,39 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 	}
 
 	for (int i = 0; i < population.size(); i++) {
-		auto dist = calcIndividualFitness(population[i]);
-		if (dist > maksimumFitness) {
-			maksimumFitness = dist;
+		auto value = calcIndividualValue(population[i]);
+		if (value < bestValue) {
+			bestValue = value;
 			bestPath = population[i];
 		}
 	}
 }
 
-std::vector<int> TSP::selectParent(const std::vector<double>& probabilities, std::random_device& rd) {
-	std::default_random_engine rng(rd());
-	std::uniform_real_distribution<double> distribution(0.0, 1.0);
-	double value = distribution(rng);
+std::vector<int> TSP::selectParentTournament(const std::vector<std::vector<int>>& population, int q, std::random_device& rd) {
+	std::uniform_int_distribution<int> dist(0, population.size() - 1);
+	double bestValue = std::numeric_limits<double>::max();
+	std::vector<int> bestIndividual;
 
-	auto it = std::lower_bound(probabilities.begin(), probabilities.end(), value);
-	if (it != probabilities.end()) {
-		return population[std::distance(probabilities.begin(), it)];
+	std::unordered_set<int> selectedIndices;
+
+	for (int i = 0; i < q; ++i) {
+		int randomIndex = dist(rd);
+		while (selectedIndices.find(randomIndex) != selectedIndices.end()) {
+			randomIndex = (randomIndex + 1) % population.size();
+		}
+
+		selectedIndices.insert(randomIndex);
+
+		const auto& candidate = population[randomIndex];
+		double candidateValue = calcIndividualValue(candidate);
+
+		if (candidateValue < bestValue) {
+			bestValue = candidateValue;
+			bestIndividual = candidate;
+		}
 	}
-	else {
-		throw std::runtime_error("ERROR: lower_bound failed");
-	}
+
+	return bestIndividual;
 }
 
 std::vector<std::vector<int>> TSP::generatePopulation(
@@ -170,12 +174,6 @@ std::vector<int> TSP::createPmxOffspring(std::vector<int> parent1, std::vector<i
 
 	return offspring;
 };
-
-double TSP::calcIndividualFitness(const std::vector<int>& individual) {
-	double result = BIG_NUMBER - calcIndividualValue(individual);
-	assert(result > 0);
-	return result;
-}
 
 double TSP::calcIndividualValue(const std::vector<int>& individual) {
 	double result = 0.0;
