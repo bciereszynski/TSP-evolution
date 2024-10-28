@@ -14,11 +14,12 @@ class TSP {
 public:
 	TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam, int selectionParam);
 	double compareToOpt(const Path& permutation);
+	Path bestPath;
 
 private:
 	std::map<std::pair<int, int>, double> distances;
 	std::vector<Path> population;
-	Path bestPath;
+
 	double bestValue = std::numeric_limits<double>::max();
 	int mutationParam;
 	int selectionParam;

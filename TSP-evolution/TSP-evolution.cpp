@@ -24,6 +24,7 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 			if (value < bestValue) {
 				bestValue = value;
 				bestPath = population[i];
+				std::cout << "curr best: " << bestValue << std::endl;
 				improvement = true;
 			}
 		}

@@ -23,5 +23,9 @@ int main() {
 
 	std::cout << tsp.compareToOpt(optPath) << std::endl;
 
+	for (int i = 0; i < tsp.bestPath.size(); i++) {
+		std::cout << tsp.bestPath[i] << std::endl;
+	}
+
 	return 0;
 }
