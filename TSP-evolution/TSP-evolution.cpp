@@ -8,11 +8,11 @@
 #include <unordered_set>
 
 TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam, int selectionParam) {
-	this->locations = locations;
 	this->mutationParam = mutationParam;
 	this->selectionParam = selectionParam;
 
-	generatePopulation(populationSize);
+	generatePopulation(populationSize, locations);
+	calculateDistances(locations);
 	int iterationsWithoutImprovement = 0;
 
 	while (true) {
@@ -94,7 +94,15 @@ Path TSP::selectParentTournament() {
 	return bestIndividual;
 }
 
-void TSP::generatePopulation(int populationSize ) 
+void TSP::calculateDistances(std::vector<Location>locations) {
+	for (auto from : locations) {
+		for (auto to : locations){
+			distances[{from.id, to.id}] = utils::calcEuclDistance(from, to);
+		}
+	}
+}
+
+void TSP::generatePopulation(int populationSize, std::vector<Location>locations)
 {
 	Path locationsIDs;
 
@@ -168,12 +176,14 @@ Path TSP::createPmxOffspring(Path parent1, Path parent2, int crosspoint1, int cr
 	return offspring;
 };
 
-double TSP::calcIndividualValue(const Path& individual) {
-	double result = 0.0;
-	for (int i = 1; i < individual.size(); i++) {
-		result += utils::calcEuclDistance(locations[individual[i] - 1], locations[individual[i - 1] - 1]);
+double TSP::calcIndividualValue(const std::vector<int>& individual) {
+	double length = 0.0;
+	for (size_t i = 0; i < individual.size(); ++i) {
+		int from = individual[i];
+		int to = individual[(i + 1) %individual.size()];
+		length += distances[{from, to}];
 	}
-	return result;
+	return length;
 }
 
 double TSP::compareToOpt(const Path& permutation) {

@@ -4,6 +4,8 @@
 #include "utils.h"
 
 #include <limits>
+#include <map>
+#include <utility>
 
 using Path = std::vector<int>;
 
@@ -14,7 +16,7 @@ public:
 	double compareToOpt(const Path& permutation);
 
 private:
-	std::vector<Location> locations;
+	std::map<std::pair<int, int>, double> distances;
 	std::vector<Path> population;
 	Path bestPath;
 	double bestValue = std::numeric_limits<double>::max();
@@ -23,7 +25,8 @@ private:
 
 	std::random_device rd;
 
-	void generatePopulation(int populationSize);
+	void calculateDistances(std::vector<Location>locations);
+	void generatePopulation(int populationSize, std::vector<Location>locations);
 	Path createPmxOffspring(
 		Path parent1, Path parent2,
 		int crosspoint1, int crosspoint2);
