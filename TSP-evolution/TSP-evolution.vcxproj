@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="data.tsp" />
+    <Text Include="note.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TSP.h" />

@@ -32,6 +32,7 @@
     <Text Include="data.tsp">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="note.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils.h">
