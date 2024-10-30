@@ -46,7 +46,7 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 
 			std::vector<int> crossoverPoints = utils::getRandomUniquePositions(parent1.size(), 2, rd);
 
-			auto offspringPair = pmxCrossover(parent1, parent2, crossoverPoints[0], crossoverPoints[1]);
+			auto offspringPair = crossover(parent1, parent2, crossoverPoints[0], crossoverPoints[1], Ox);
 			newPopulation.push_back(offspringPair.first);
 			newPopulation.push_back(offspringPair.second);
 		}
@@ -133,12 +133,24 @@ void TSP::scrambleMutation(Path& individual) {
 	}
 }
 
-std::pair<Path, Path> TSP::pmxCrossover(const Path& parent1, const Path& parent2, int crosspoint1, int crosspoint2) {
+std::pair<Path, Path> TSP::crossover(const Path& parent1, const Path& parent2, int crosspoint1, int crosspoint2, CrossoverMethod method) {
 	if (crosspoint1 > crosspoint2) {
 		std::swap(crosspoint1, crosspoint2);
 	}
-	return { createPmxOffspring(parent2, parent1, crosspoint1, crosspoint2),
-			 createPmxOffspring(parent1, parent2, crosspoint1, crosspoint2) };
+	switch (method)
+	{
+	case Pmx:
+		return { 
+		createPmxOffspring(parent2, parent1, crosspoint1, crosspoint2),
+		createPmxOffspring(parent1, parent2, crosspoint1, crosspoint2) };
+	
+	case Ox:
+		return {
+		createOxOffspring(parent2, parent1, crosspoint1, crosspoint2),
+		createOxOffspring(parent1, parent2, crosspoint1, crosspoint2) };
+	default:
+		return { parent1, parent2 };
+	}
 }
 
 Path TSP::createPmxOffspring(Path parent1, Path parent2, int crosspoint1, int crosspoint2) {
@@ -172,7 +184,31 @@ Path TSP::createPmxOffspring(Path parent1, Path parent2, int crosspoint1, int cr
 	return offspring;
 };
 
-double TSP::calcIndividualValue(const std::vector<int>& individual) {
+Path TSP::createOxOffspring(Path parent1, Path parent2, int crosspoint1, int crosspoint2) {
+	int n = parent1.size();
+	Path offspring(n, -1);
+
+	for (int i = crosspoint1; i <= crosspoint2; ++i) {
+		offspring[i] = parent1[i];
+	}
+
+	int candidate_value_index = (crosspoint2 + 1) % n;
+
+	for (int i = candidate_value_index; i != crosspoint1; i = (i + 1) % n ) {
+
+		while (std::find(offspring.begin() + crosspoint1,
+			offspring.begin() + crosspoint2 + 1, parent2[candidate_value_index]) != offspring.begin() + crosspoint2 + 1) {
+			candidate_value_index = (candidate_value_index + 1) % n;
+		}
+
+		offspring[i] = parent2[candidate_value_index];
+		candidate_value_index = (candidate_value_index + 1) % n;
+	}
+
+	return offspring;
+};
+
+double TSP::calcIndividualValue(const Path& individual) {
 	double length = 0.0;
 	for (size_t i = 0; i < individual.size(); ++i) {
 		int from = individual[i];
