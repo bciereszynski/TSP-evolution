@@ -9,6 +9,11 @@
 
 namespace utils {
 
+	enum OptMethod {
+		FirstImprovement,
+		BestImprovement
+	};
+
 	double calcEuclDistance(const Location& location1, const Location& location2);
 
 	std::vector<Location> loadTSPLIB(const std::string& filename);
@@ -22,5 +27,5 @@ namespace utils {
 
 	std::map<std::pair<int, int>, double> calculateDistances(const std::vector<Location>locations);
 
-	void twoOptFI(std::vector<int>& individual, std::map<std::pair<int, int>, double> distances);
+	bool twoOpt(std::vector<int>& individual, std::map<std::pair<int, int>, double> distances, OptMethod method = FirstImprovement);
 }  // namespace utils

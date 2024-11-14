@@ -158,24 +158,44 @@ namespace utils {
 	}
 
 	// 2-opt algorithm with first improvement rule
-	void twoOptFI(std::vector<int>& individual, std::map<std::pair<int, int>, double> distances) {
+	bool twoOpt(std::vector<int>& individual, std::map<std::pair<int, int>, double> distances, OptMethod method) {
 		auto n = individual.size();
-		if (n < 3) {
-			return;
-		}
+
+		auto bestImprovement = 0;
+		std::pair<int, int> bestSwapPoints;
 
 		for (int i = 0; i < n - 1; i++) {
 			for (int j = i + 1; j < n; j++) {
-				auto lengthChange =
-					distances[{individual[(i - 1) % n], individual[j]}] -
-					distances[{individual[(i - 1) % n], individual[i] }] -
-					distances[{individual[j], individual[(j + 1) % n]}] +
-					distances[{individual[i], individual[(j + 1) % n]}];
-				if (lengthChange < 0) {
-					std::swap(individual[i], individual[j]);
-					return;
+				auto beforeFirst = individual[(i - 1 + n) % n];
+				auto afterSecond = individual[(j + 1) % n];
+				auto improvement =
+					distances[{beforeFirst, individual[i]}] +
+					distances[{individual[j], afterSecond}]
+					-distances[{individual[i], afterSecond}]
+					-distances[{beforeFirst, individual[j]}];
+				if (improvement > bestImprovement) {
+					switch (method)
+					{
+					case FirstImprovement:
+						std::swap(individual[i], individual[j]);
+						return true;
+					case BestImprovement:
+						bestImprovement = improvement;
+						bestSwapPoints = { i, j };
+						break;
+					default:
+						throw std::runtime_error("Unknown opt method");
+						break;
+					}
 				}
 			}
 		}
+		if (method == BestImprovement && bestImprovement > 0) {
+			std::swap(individual[bestSwapPoints.first], individual[bestSwapPoints.second]);
+			
+			return true;
+		}
+
+		return false;
 	}
 }  // namespace utils

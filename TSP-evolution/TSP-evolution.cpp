@@ -32,6 +32,7 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 		if (!improvement) {
 			iterationsWithoutImprovement++;
 			if (iterationsWithoutImprovement == iterations) {
+				// while(utils::twoOpt(bestPath, distances, utils::BestImprovement)){}
 				break;
 			}
 		}
@@ -92,17 +93,18 @@ Path TSP::selectParentTournament(std::vector<double> values) {
 
 void TSP::generatePopulation(int populationSize, std::vector<Location>locations)
 {
-	Path locationsIDs;
+	Path newIndividual;
 
 	for (int i = 0; i < locations.size(); ++i) {
-		locationsIDs.push_back(locations[i].id);
+		newIndividual.push_back(locations[i].id);
 	}
 
 	std::default_random_engine rng(rd());
 
 	for (int i = 0; i < populationSize; ++i) {
-		std::shuffle(locationsIDs.begin(), locationsIDs.end(), rng);
-		population.push_back(locationsIDs);
+		std::shuffle(newIndividual.begin(), newIndividual.end(), rng);
+		utils::twoOpt(newIndividual, distances);
+		population.push_back(newIndividual);
 	}
 }
 
@@ -173,6 +175,8 @@ Path TSP::createPmxOffspring(Path parent1, Path parent2, int crosspoint1, int cr
 		offspring[i] = candidate_value;
 	}
 
+	utils::twoOpt(offspring, distances);
+
 	return offspring;
 };
 
@@ -204,7 +208,7 @@ double TSP::calcIndividualValue(const Path& individual) {
 	double length = 0.0;
 	for (size_t i = 0; i < individual.size(); ++i) {
 		int from = individual[i];
-		int to = individual[(i + 1) %individual.size()];
+		int to = individual[(i + 1) % individual.size()];
 		length += distances[{from, to}];
 	}
 	return length;
