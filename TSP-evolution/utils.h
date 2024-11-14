@@ -18,4 +18,5 @@ namespace utils {
 	void printLocationsAndDistances(const std::vector<Location>& locations);
 
 	void printPopulation(const std::vector<std::vector<int>>& population);
+	void twoOptFI(std::vector<int>& individual, std::map<std::pair<int, int>, double> distances);
 }  // namespace utils

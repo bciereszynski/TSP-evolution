@@ -146,4 +146,25 @@ namespace utils {
 			std::cout << '\n';
 		}
 	}
+	// 2-opt algorithm with first improvement rule
+	void twoOptFI(std::vector<int>& individual, std::map<std::pair<int, int>, double> distances) {
+		auto n = individual.size();
+		if (n < 3) {
+			return;
+		}
+
+		for (int i = 0; i < n - 1; i++) {
+			for (int j = i + 1; j < n; j++) {
+				auto lengthChange =
+					distances[{individual[(i - 1) % n], individual[j]}] -
+					distances[{individual[(i - 1) % n], individual[i] }] -
+					distances[{individual[j], individual[(j + 1) % n]}] +
+					distances[{individual[i], individual[(j + 1) % n]}];
+				if (lengthChange < 0) {
+					std::swap(individual[i], individual[j]);
+					return;
+				}
+			}
+		}
+	}
 }  // namespace utils
