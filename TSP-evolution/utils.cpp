@@ -146,6 +146,17 @@ namespace utils {
 			std::cout << '\n';
 		}
 	}
+
+	std::map<std::pair<int, int>, double> calculateDistances(const std::vector<Location>locations) {
+		std::map<std::pair<int, int>, double> distances;
+		for (auto from : locations) {
+			for (auto to : locations) {
+				distances[{from.id, to.id}] = utils::calcEuclDistance(from, to);
+			}
+		}
+		return distances;
+	}
+
 	// 2-opt algorithm with first improvement rule
 	void twoOptFI(std::vector<int>& individual, std::map<std::pair<int, int>, double> distances) {
 		auto n = individual.size();

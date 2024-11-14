@@ -32,7 +32,6 @@ private:
 
 	std::random_device rd;
 
-	void calculateDistances(std::vector<Location>locations);
 	void generatePopulation(int populationSize, std::vector<Location>locations);
 	Path createPmxOffspring(
 		Path parent1, Path parent2,

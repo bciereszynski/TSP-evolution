@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <vector>
 #include <string>
 #include <random>
@@ -18,5 +19,8 @@ namespace utils {
 	void printLocationsAndDistances(const std::vector<Location>& locations);
 
 	void printPopulation(const std::vector<std::vector<int>>& population);
+
+	std::map<std::pair<int, int>, double> calculateDistances(const std::vector<Location>locations);
+
 	void twoOptFI(std::vector<int>& individual, std::map<std::pair<int, int>, double> distances);
 }  // namespace utils

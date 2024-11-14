@@ -10,8 +10,8 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 	this->mutationParam = mutationParam;
 	this->selectionParam = selectionParam;
 
+	distances = utils::calculateDistances(locations);
 	generatePopulation(populationSize, locations);
-	calculateDistances(locations);
 	int iterationsWithoutImprovement = 0;
 	std::vector<double> values(population.size());
 
@@ -88,14 +88,6 @@ Path TSP::selectParentTournament(std::vector<double> values) {
 	}
 
 	return bestIndividual;
-}
-
-void TSP::calculateDistances(std::vector<Location>locations) {
-	for (auto from : locations) {
-		for (auto to : locations){
-			distances[{from.id, to.id}] = utils::calcEuclDistance(from, to);
-		}
-	}
 }
 
 void TSP::generatePopulation(int populationSize, std::vector<Location>locations)
