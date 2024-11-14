@@ -1,5 +1,6 @@
 ﻿#include "utils.h"
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -165,7 +166,7 @@ namespace utils {
 		std::pair<int, int> bestSwapPoints;
 
 		for (int i = 0; i < n - 1; i++) {
-			for (int j = i + 1; j < n; j++) {
+			for (int j = i + 1; j < n-1 || (i != 0 && j<n); j++) {
 				auto beforeFirst = individual[(i - 1 + n) % n];
 				auto afterSecond = individual[(j + 1) % n];
 				auto improvement =
@@ -177,7 +178,7 @@ namespace utils {
 					switch (method)
 					{
 					case FirstImprovement:
-						std::swap(individual[i], individual[j]);
+						std::reverse(individual.begin() + i, individual.begin() + j + 1);
 						return true;
 					case BestImprovement:
 						bestImprovement = improvement;
@@ -191,7 +192,7 @@ namespace utils {
 			}
 		}
 		if (method == BestImprovement && bestImprovement > 0) {
-			std::swap(individual[bestSwapPoints.first], individual[bestSwapPoints.second]);
+			std::reverse(individual.begin()+bestSwapPoints.first, individual.begin() + bestSwapPoints.second + 1);
 			
 			return true;
 		}

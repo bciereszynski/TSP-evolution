@@ -32,7 +32,8 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 		if (!improvement) {
 			iterationsWithoutImprovement++;
 			if (iterationsWithoutImprovement == iterations) {
-				// while(utils::twoOpt(bestPath, distances, utils::BestImprovement)){}
+				std::cout << "Local optimization..." << std::endl;
+				while(utils::twoOpt(bestPath, distances, utils::BestImprovement)){}
 				break;
 			}
 		}
