@@ -4,27 +4,30 @@
 #include "utils.h"
 
 int main() {
-	const std::string filename = "data.tsp";
+	const std::string dataFilename = "data.tsp";
+	const std::string optFilename = "opt.tsp";
 	const int populationSize = 100;
-	const int iterations = 100;
-	const int k = 3;
-	const int q = 5;
+	const int iterationsWithoutImprovement = 100;
+	const bool verbose = true;
+	const int mutationParam = 3;
+	const int selectionParam = 5;
 
-	std::vector<Location> locations = utils::loadTSPLIB(filename);
+	std::vector<Location> locations = utils::loadTSPLIB(dataFilename);
 
 	if (locations.empty()){
 		std::cerr << "ERROR: data not loaded" << std::endl;
 		return 1;
 	}
 
-	TSP tsp(populationSize, locations, iterations, k, q);
+	TSP tsp(locations, populationSize, iterationsWithoutImprovement, mutationParam, selectionParam, verbose);
 
-	std::vector<int> optPath = utils::loadoptTSPLIB("opt.tsp");
-
-	for (int i = 0; i < tsp.bestPath.size(); i++) {
-		std::cout << tsp.bestPath[i] << std::endl;
-	}
-	std::cout << tsp.compareToOpt(optPath) << std::endl;
+	std::vector<int> optPath = utils::loadoptTSPLIB(optFilename);
+	
+	if (verbose)
+		for (int i = 0; i < tsp.bestPath.size(); i++) {
+			std::cout << tsp.bestPath[i] << std::endl;
+		}
+	tsp.compareToOpt(optPath);
 
 
 

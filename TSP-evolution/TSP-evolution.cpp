@@ -6,7 +6,7 @@
 #include <iostream>
 #include <unordered_map>
 
-TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int mutationParam, int selectionParam) {
+TSP::TSP(std::vector<Location>locations, int populationSize, int iterations, int mutationParam, int selectionParam, bool verbose) {
 	this->mutationParam = mutationParam;
 	this->selectionParam = selectionParam;
 
@@ -24,7 +24,8 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 			if (values[i] < bestValue) {
 				bestValue = values[i];
 				bestPath = population[i];
-				std::cout << "curr best: " << bestValue << " - iteration without improvement: " << iterationsWithoutImprovement << std::endl;
+				if (verbose)
+					std::cout << "Current best: " << bestValue << " - iteration without improvement: " << iterationsWithoutImprovement << std::endl;
 				improvement = true;
 			}
 		}
@@ -32,7 +33,8 @@ TSP::TSP(int populationSize, std::vector<Location>locations, int iterations, int
 		if (!improvement) {
 			iterationsWithoutImprovement++;
 			if (iterationsWithoutImprovement == iterations) {
-				std::cout << "Local optimization..." << std::endl;
+				if (verbose)
+					std::cout << "Local optimization..." << std::endl;
 				while(utils::twoOpt(bestPath, distances, utils::BestImprovement)){}
 				break;
 			}
