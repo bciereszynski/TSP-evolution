@@ -19,7 +19,7 @@ namespace utils {
 	std::vector<Location> loadTSPLIB(const std::string& filename);
 	std::vector<int> loadoptTSPLIB(const std::string& filename);
 
-	std::vector<int> getRandomUniquePositions(const int n, const int k, std::random_device& rd);
+	std::vector<int> getRandomUniquePositions(const int n, const int k);
 
 	void printLocationsAndDistances(const std::vector<Location>& locations);
 

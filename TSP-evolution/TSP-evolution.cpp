@@ -5,6 +5,7 @@
 #include <random>    
 #include <iostream>
 #include <unordered_map>
+#include "RandomGenerator.h"
 
 TSP::TSP(std::vector<Location>locations, int populationSize, int iterations, int mutationParam, int selectionParam, bool verbose) {
 	this->mutationParam = mutationParam;
@@ -48,7 +49,7 @@ TSP::TSP(std::vector<Location>locations, int populationSize, int iterations, int
 			Path parent1 = selectParentTournament(values);
 			Path parent2 = selectParentTournament(values);
 
-			std::vector<int> crossoverPoints = utils::getRandomUniquePositions(parent1.size(), 2, rd);
+			std::vector<int> crossoverPoints = utils::getRandomUniquePositions(parent1.size(), 2);
 
 			auto offspringPair = crossover(parent1, parent2, crossoverPoints[0], crossoverPoints[1], Ox);
 			newPopulation.push_back(offspringPair.first);
@@ -56,6 +57,7 @@ TSP::TSP(std::vector<Location>locations, int populationSize, int iterations, int
 		}
 
 		for (auto& individual : newPopulation) {
+			std::random_device rd;
 			if (std::uniform_real_distribution<double>(0.0, 1.0)(rd) < 0.03) {
 				scrambleMutation(individual);
 			}
@@ -77,7 +79,7 @@ Path TSP::selectParentTournament(std::vector<double> values) {
 	Path bestIndividual = population[0];
 
 	std::vector<int> selectedIndexes =
-		utils::getRandomUniquePositions(population.size(), selectionParam, rd);
+		utils::getRandomUniquePositions(population.size(), selectionParam);
 
 	for (int i = 0; i < selectionParam; ++i) {
 		int index = selectedIndexes[i];
@@ -102,10 +104,8 @@ void TSP::generatePopulation(int populationSize, std::vector<Location>locations)
 		newIndividual.push_back(locations[i].id);
 	}
 
-	std::default_random_engine rng(rd());
-
 	for (int i = 0; i < populationSize; ++i) {
-		std::shuffle(newIndividual.begin(), newIndividual.end(), rng);
+		std::shuffle(newIndividual.begin(), newIndividual.end(), RandomGenerator());
 		utils::twoOpt(newIndividual, distances);
 		population.push_back(newIndividual);
 	}
@@ -116,14 +116,13 @@ void TSP::scrambleMutation(Path& individual) {
 		throw std::runtime_error("ERROR: individual size is less than mutation parameter k");
 	}
 	std::vector<int> randomIndexes = utils::getRandomUniquePositions(
-		individual.size(), mutationParam, rd);
+		individual.size(), mutationParam);
 
 	std::vector<int> choosenLocations;
 	for (int i = 0; i < randomIndexes.size(); i++) {
 		choosenLocations.push_back(individual[randomIndexes[i]]);
 	}
-	std::default_random_engine rng(rd());
-	std::shuffle(choosenLocations.begin(), choosenLocations.end(), rng);
+	std::shuffle(choosenLocations.begin(), choosenLocations.end(), RandomGenerator());
 
 	for (int i = 0; i < randomIndexes.size(); i++) {
 		individual[randomIndexes[i]] = choosenLocations[i];

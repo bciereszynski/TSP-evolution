@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cmath>
 #include <unordered_set>
+#include "RandomGenerator.h"
 
 namespace utils {
 	double calcEuclDistance(const Location& location1, const Location& location2) {
@@ -89,15 +90,14 @@ namespace utils {
 		return permutation;
 	}
 
-	std::vector<int> getRandomUniquePositions(const int n, const int k, std::random_device& rd) {
+	std::vector<int> getRandomUniquePositions(const int n, const int k) {
 		if (k > n / 10) {
 			std::vector<int> indexes(n);
 			for (int i = 0; i < n; ++i) {
 				indexes[i] = i;
 			}
 
-			std::default_random_engine rng(rd());
-			std::shuffle(indexes.begin(), indexes.end(), rng);
+			std::shuffle(indexes.begin(), indexes.end(), RandomGenerator());
 
 			std::vector<int> result(indexes.begin(), indexes.begin() + k);
 
@@ -107,6 +107,8 @@ namespace utils {
 		else {
 			std::vector<int> result;
 			result.reserve(k);
+
+			std::random_device rd;
 			std::default_random_engine rng(rd());
 			std::uniform_int_distribution<int> dist(0, n - 1);
 			std::unordered_set<int> selected;

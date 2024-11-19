@@ -30,8 +30,6 @@ private:
 	int mutationParam;
 	int selectionParam;
 
-	std::random_device rd;
-
 	void generatePopulation(int populationSize, std::vector<Location>locations);
 	Path createPmxOffspring(
 		Path parent1, Path parent2,

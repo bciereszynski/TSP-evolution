@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Location.h" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="TSP-evolution.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
@@ -137,6 +138,7 @@
     <Text Include="note.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="TSP.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

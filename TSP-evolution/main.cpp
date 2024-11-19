@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "utils.h"
+#include "RandomGenerator.h"
 
 int main() {
 	const std::string dataFilename = "data.tsp";
@@ -35,11 +36,9 @@ int main() {
 	for (int i = 0; i < locations.size(); ++i) {
 		test2Opt.push_back(locations[i].id);
 	}
-	std::random_device rd;
-	std::default_random_engine rng(rd());
 
 	for (int i = 0; i < populationSize; ++i) {
-		std::shuffle(test2Opt.begin(), test2Opt.end(), rng);
+		std::shuffle(test2Opt.begin(), test2Opt.end(), RandomGenerator());
 	}
 	auto distances = utils::calculateDistances(locations);
 	while (utils::twoOpt(test2Opt, distances, utils::BestImprovement)) {}
