@@ -160,15 +160,15 @@ namespace utils {
 		return distances;
 	}
 
-	// 2-opt algorithm with first improvement rule
+	// 2-opt algorithm
 	bool twoOpt(std::vector<int>& individual, std::map<std::pair<int, int>, double> distances, OptMethod method) {
 		auto n = individual.size();
 
 		auto bestImprovement = 0;
 		std::pair<int, int> bestSwapPoints;
 
-		for (int i = 0; i < n - 1; i++) {
-			for (int j = i + 1; j < n-1 || (i != 0 && j<n); j++) {
+		for (int i = 1; i < n - 1; i++) {
+			for (int j = i + 1; j < n; j++) {
 				auto beforeFirst = individual[(i - 1 + n) % n];
 				auto afterSecond = individual[(j + 1) % n];
 				auto improvement =
