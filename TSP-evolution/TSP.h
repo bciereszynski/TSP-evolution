@@ -17,7 +17,7 @@ using Path = std::vector<int>;
 class TSP {
 
 public:
-	TSP(std::vector<Location>locations, int populationSize = 10, int iterations = 10, int mutationParam = 3, int selectionParam = 5, bool verbose = false);
+	TSP(std::vector<Location>locations, int populationSize, int iterations, double mutationChance = 0.03, int mutationParam = 3, int selectionParam = 5, CrossoverMethod crossoverMethod = Ox, bool verbose = false);
 	double compareToOpt(const Path& permutation, std::ostream& outputFile);
 	Path bestPath;
 	std::pair<Path, Path> crossover(const Path& parent1, const Path& parent2, int crosspoint1, int crosspoint2, CrossoverMethod method);

@@ -8,7 +8,14 @@
 #include <unordered_map>
 #include "RandomGenerator.h"
 
-TSP::TSP(std::vector<Location>locations, int populationSize, int iterations, int mutationParam, int selectionParam, bool verbose) {
+TSP::TSP(std::vector<Location>locations,
+	int populationSize,
+	int iterations,
+	double mutationChance,
+	int mutationParam,
+	int selectionParam,
+	CrossoverMethod crossoverMethod,
+	bool verbose) {
 	this->mutationParam = mutationParam;
 	this->selectionParam = selectionParam;
 
@@ -46,14 +53,14 @@ TSP::TSP(std::vector<Location>locations, int populationSize, int iterations, int
 
 			std::vector<int> crossoverPoints = utils::getRandomUniquePositions(parent1.size(), 2);
 
-			auto offspringPair = crossover(parent1, parent2, crossoverPoints[0], crossoverPoints[1], Ox);
+			auto offspringPair = crossover(parent1, parent2, crossoverPoints[0], crossoverPoints[1], crossoverMethod);
 			newPopulation.push_back(offspringPair.first);
 			newPopulation.push_back(offspringPair.second);
 		}
 
 		for (auto& individual : newPopulation) {
 			std::random_device rd;
-			if (std::uniform_real_distribution<double>(0.0, 1.0)(rd) < 0.03) {
+			if (std::uniform_real_distribution<double>(0.0, 1.0)(rd) < mutationChance) {
 				scrambleMutation(individual);
 			}
 		}

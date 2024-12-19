@@ -14,8 +14,10 @@ int main(int argc, char* argv[]) {
 	int populationSize = 100;
 	int iterations = 10;
 	bool verbose = true;
+	double mutationChance = 0.03;
 	int mutationParam = 3;
 	int selectionParam = 5;
+	CrossoverMethod crossoverMethod = Ox;
 
 	for (int i = 1; i < argc; ++i) {
 		std::string arg = argv[i];
@@ -36,6 +38,17 @@ int main(int argc, char* argv[]) {
 		}
 		else if (arg == "--mutation" && i + 1 < argc) {
 			mutationParam = std::stoi(argv[++i]);
+		}
+		else if (arg == "--mutation%" && i + 1 < argc) {
+			mutationChance = std::stoi(argv[++i]);
+		}
+		else if (arg == "--crossover" && i + 1 < argc) {
+			int crossoverCode = std::stoi(argv[++i]);
+			switch (crossoverCode) {
+			case 0: crossoverMethod = Ox; break;
+			case 1: crossoverMethod = Pmx; break;
+			default: break;
+			}
 		}
 		else if (arg == "--selection" && i + 1 < argc) {
 			selectionParam = std::stoi(argv[++i]);
@@ -61,8 +74,10 @@ int main(int argc, char* argv[]) {
 	*output << "  Population size: " << populationSize << std::endl;
 	*output << "  Iterations: " << iterations << std::endl;
 	*output << "  Verbose: " << (verbose ? "Y" : "N") << std::endl;
+	*output << "  Mutation chance: " << mutationChance << std::endl;
 	*output << "  Mutation param: " << mutationParam << std::endl;
 	*output << "  Selection param: " << selectionParam << std::endl;
+	*output << "  Crossover method: " << crossoverMethod << std::endl;
 
 	std::vector<Location> locations = utils::loadTSPLIB(dataFilename);
 
@@ -71,7 +86,7 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	TSP tsp(locations, populationSize, iterations, mutationParam, selectionParam, verbose);
+	TSP tsp(locations, populationSize, iterations, mutationChance, mutationParam, selectionParam, crossoverMethod, verbose);
 
 	std::vector<int> optPath = utils::loadoptTSPLIB(optFilename);
 	
