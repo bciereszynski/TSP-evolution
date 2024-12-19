@@ -2,6 +2,7 @@
 
 #include <algorithm> 
 #include <cassert>
+#include <fstream>  
 #include <random>    
 #include <iostream>
 #include <unordered_map>
@@ -16,7 +17,7 @@ TSP::TSP(std::vector<Location>locations, int populationSize, int iterations, int
 	int iterationsWithoutImprovement = 0;
 	std::vector<double> values(population.size());
 
-	while (true) {
+	for (int iter = 0; iter < iterations; iter++) {
 
 		bool improvement = false;
 
@@ -33,12 +34,6 @@ TSP::TSP(std::vector<Location>locations, int populationSize, int iterations, int
 
 		if (!improvement) {
 			iterationsWithoutImprovement++;
-			if (iterationsWithoutImprovement == iterations) {
-				if (verbose)
-					std::cout << "Local optimization..." << std::endl;
-				while(utils::twoOpt(bestPath, distances, utils::BestImprovement)){}
-				break;
-			}
 		}
 		else {
 			iterationsWithoutImprovement = 0;
@@ -72,6 +67,12 @@ TSP::TSP(std::vector<Location>locations, int populationSize, int iterations, int
 			bestPath = population[i];
 		}
 	}
+	
+	if (verbose) {
+		std::cout << "Local optimization..." << std::endl;
+	}
+
+	while (utils::twoOpt(bestPath, distances, utils::BestImprovement)) {}
 }
 
 Path TSP::selectParentTournament(std::vector<double> values) {
@@ -104,6 +105,7 @@ void TSP::generatePopulation(int populationSize, std::vector<Location>locations)
 		newIndividual.push_back(locations[i].id);
 	}
 
+	// generate random solutions
 	for (int i = 0; i < populationSize; ++i) {
 		std::shuffle(newIndividual.begin(), newIndividual.end(), RandomGenerator());
 		utils::twoOpt(newIndividual, distances);
@@ -216,12 +218,12 @@ double TSP::calcIndividualValue(const Path& individual) {
 	return length;
 }
 
-double TSP::compareToOpt(const Path& permutation) {
+double TSP::compareToOpt(const Path& permutation, std::ostream& output) {
 	double optResult = calcIndividualValue(permutation);
 	double locatResult = calcIndividualValue(bestPath);
 
-	std::cout << "Optimal path: " << optResult << std::endl;
-	std::cout << "Out best path: " << locatResult << std::endl;
+	output << "Optimal path: " << optResult << std::endl;
+	output << "Our best path: " << locatResult << std::endl;
 
 	return optResult - locatResult;
 }
