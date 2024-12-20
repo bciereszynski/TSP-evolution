@@ -9,10 +9,10 @@
 
 int main(int argc, char* argv[]) {
 	std::string dataFilename = "data.tsp";
-	std::string optFilename = "opt.tsp";
+	std::string optFilename = "data.opt.tour";
 	std::string outFilename = "";
 	int populationSize = 100;
-	int iterations = 10;
+	int iterations = 10000;
 	bool verbose = true;
 	double mutationChance = 0.03;
 	int mutationParam = 3;
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
 
 	}
 
-	*output << "2Opt value:" <<  distance2Opt << std::endl;
+	*output << "2-Opt value comparison:" <<  distance2Opt << std::endl;
 	outputFile.close();
 
 	return 0;

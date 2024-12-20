@@ -49,7 +49,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="opt.tsp">
+    <None Include="data.opt.tour">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
