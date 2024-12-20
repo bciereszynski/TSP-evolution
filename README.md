@@ -8,14 +8,11 @@ Dodatkowo:
 
 - trzeci operator krzyżowania 5pkt. ➖
 
-- własny generator znaków losowych i porównanie z heursytyką 2-opt. 10 pkt:
-- implementacja 2-opt ➕
-- dostrojenie generatora ...
-- badania porowanawcze ...
+- własny generator znaków losowych i porównanie z heursytyką 2-opt. 10 pkt ➕
 
 - algorytm memetyczny 10 pkt. ➕
 
 Bonusowo:
 
 +10 pkt, jeżeli algorytm memetyczny wykorzystuje heurystykę 3-opt ➖ 
-+15 pkt, jeżeli algorytm memetyczny wykorzystuje heurystykę LK ...
++15 pkt, jeżeli algorytm memetyczny wykorzystuje heurystykę LK ➖ 
