@@ -30,6 +30,15 @@ namespace utils {
 
 			iss >> keyword;
 
+			if (keyword == "EDGE_WEIGHT_TYPE:") {
+				std::string type;
+				iss >> type;
+				if (type != "EUC_2D") {
+					std::cerr << "Invalid data type - only EUC_2D is supported!" << std::endl;
+					exit(0);
+				}
+			}
+
 			if (keyword == "NODE_COORD_SECTION") {
 				inNodeCoordSection = true;
 				continue;

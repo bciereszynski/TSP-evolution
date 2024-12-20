@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 	std::string outFilename = "";
 	int populationSize = 100;
 	int iterations = 10000;
-	bool verbose = true;
+	bool verbose = false;
 	double mutationChance = 0.03;
 	int mutationParam = 3;
 	int selectionParam = 5;
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 			mutationParam = std::stoi(argv[++i]);
 		}
 		else if (arg == "--mutation%" && i + 1 < argc) {
-			mutationChance = std::stoi(argv[++i]);
+			mutationChance = std::stof(argv[++i]);
 		}
 		else if (arg == "--crossover" && i + 1 < argc) {
 			int crossoverCode = std::stoi(argv[++i]);
