@@ -9,7 +9,7 @@
 
 int main(int argc, char* argv[]) {
 	std::string dataFilename = "data.tsp";
-	std::string optFilename = "data.opt.tour";
+	std::string optFilename = "";
 	std::string outFilename = "";
 	int populationSize = 100;
 	int iterations = 10000;
@@ -88,13 +88,26 @@ int main(int argc, char* argv[]) {
 
 	TSP tsp(locations, populationSize, iterations, mutationChance, mutationParam, selectionParam, crossoverMethod, verbose);
 
-	std::vector<int> optPath = utils::loadoptTSPLIB(optFilename);
-	
 
 	for (int i = 0; i < tsp.bestPath.size(); i++) {
 		*output << tsp.bestPath[i] << std::endl;
 	}
-	tsp.compareToOpt(optPath, *output);
+
+	auto distances = utils::calculateDistances(locations);
+
+	if (optFilename != "") {
+		std::vector<int> optPath = utils::loadoptTSPLIB(optFilename);
+		tsp.compareToOpt(optPath, *output);
+	}
+	else {
+		double distance= 0.0;
+		for (int i = 0; i < tsp.bestPath.size(); i++) {
+			distance += distances[{tsp.bestPath[i], tsp.bestPath[(i + 1) % tsp.bestPath.size()]}];
+
+		}
+		*output << "Best path distance: " << distance << std::endl;
+	}
+
 
 	Path test2Opt;
 	for (int i = 0; i < locations.size(); ++i) {
@@ -102,8 +115,6 @@ int main(int argc, char* argv[]) {
 	}
 
 	std::shuffle(test2Opt.begin(), test2Opt.end(), RandomGenerator());
-	
-	auto distances = utils::calculateDistances(locations);
 	while (utils::twoOpt(test2Opt, distances, utils::BestImprovement)) {}
 	double distance2Opt = 0.0;
 	for (int i = 0; i < test2Opt.size(); i++) {
