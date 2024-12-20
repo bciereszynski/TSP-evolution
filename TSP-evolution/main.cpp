@@ -24,6 +24,9 @@ int main(int argc, char* argv[]) {
 		if (arg == "--data" && i + 1 < argc) {
 			dataFilename = argv[++i];
 		}
+		else if (arg == "--output" && i + 1 < argc) {
+			outFilename = argv[++i];
+		}
 		else if (arg == "--opt" && i + 1 < argc) {
 			optFilename = argv[++i];
 		}
