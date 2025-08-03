@@ -1,18 +1,8 @@
 # TSP-evolution
 
-Minimum (25 pkt.)
+TSP algorithm with two crossover operators and input reading in TSPLIB format.
 
-- Algorytm z dwoma operatorami krzyżowania i czytający dane wejściowe w formacie TSPLIB. ✅
+**Additional features:**
 
-Dodatkowo:
-
-- trzeci operator krzyżowania 5pkt. ➖
-
-- własny generator znaków losowych i porównanie z heursytyką 2-opt. 10 pkt ➕
-
-- algorytm memetyczny 10 pkt. ➕
-
-Bonusowo:
-
-+10 pkt, jeżeli algorytm memetyczny wykorzystuje heurystykę 3-opt ➖ 
-+15 pkt, jeżeli algorytm memetyczny wykorzystuje heurystykę LK ➖ 
+- Custom random number generator and comparison with the 2-opt heuristic.
+- Memetic algorithm implementation.
